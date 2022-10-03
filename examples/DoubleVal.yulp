@@ -1,0 +1,26 @@
+
+object "DoubleVal" {
+  code {
+    datacopy(0, dataoffset("Runtime"), datasize("Runtime"))
+    return(0, datasize("Runtime"))
+  }
+  object "Runtime" {
+    code {
+      calldatacopy(0, 0, 36) // write calldata to memory
+
+      mstruct StoreCalldata( // Custom addressable calldata structure
+        sig: 4,
+        val: 32
+      )
+
+      switch StoreCalldata.sig(0) // select signature from memory (at position 0)
+
+      case sig"function double(uint256 val) returns (uint256)" {
+          let val := StoreCalldata.val(0)
+          let double_val := verbatim_1i_1o("600202", val)
+          mstore(100, double_val)
+          return (100, 32)
+      }
+    }
+  }
+}

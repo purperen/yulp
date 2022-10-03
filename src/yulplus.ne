@@ -34,6 +34,7 @@
     bracket: ["{", "}", "(", ")", '[', ']'],
     ConstIdentifier: /(?:const)(?:\s)/,
     keyword: ['code ', 'let', "for", "function", "enum", "mstruct", "if", "else", "break", "continue", "default", "switch", "case"],
+    verbatim: /verbatim_[0-9]i_[0-9]o/,
     Identifier: /[\w.]+/,
   });
 
@@ -113,6 +114,15 @@
 
   const stateKind = kind => d => {
     d[0].kind = kind;
+    return d;
+  }
+ 
+  function verbatimExpression(d) {
+    if (d[4].type = 'StringLiteral') {
+       d[4].type = 'HexLiteral';
+       d[4].text = 'hex'+d[4].text;
+       d[4].value = 'hex'+d[4].value;
+    }
     return d;
   }
 
@@ -966,7 +976,9 @@ NumericLiteral -> %NumberLiteral {% id %}
 Literal -> %StringLiteral {% idLiteral %}
   | NumericLiteral {% idLiteral %}
   | MAX_UINT {% idLiteral %}
+VerbatimExpression -> %verbatim _ "(" _ %StringLiteral ( _ "," _ Expression):* _ ")" {% verbatimExpression %}
 Expression -> Literal {% id %}
+  | VerbatimExpression {% id %}
   | %Identifier {% id %}
   | FunctionCall {% id %}
   | Boolean {% id %}

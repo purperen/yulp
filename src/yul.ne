@@ -64,6 +64,7 @@ Statement -> FunctionDefinition
 IfStatement -> "if" _ Expression _ Block
 Literal -> %StringLiteral
   | %NumberLiteral
+  | %HexLiteral
   | %HexNumber
 Expression -> Literal
   | %Identifier

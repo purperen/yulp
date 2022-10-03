@@ -24,13 +24,13 @@ A low-level, highly efficient extension to Yul, an intermediate smart-contract l
 ## Installing
 
 ```sh
-npm install yulp
+npm install purperen/yulp
 ```
 
 ## Building From Source
 
 ```sh
-npm install
+yarn install
 npm run build
 npm test
 ```
@@ -67,6 +67,49 @@ object "SimpleStore" {
       case sig"function get() returns (uint256)" {
         mstore(100, sload(0))
         return (100, 32)
+      }
+    }
+  }
+}
+
+`);
+
+console.log(yulp.print(source.results));
+```
+
+### Injecting arbitrary opcodes using verbatim
+
+Note: in this version of yulp you must omit the hex prefix for the hex literal and use:
+```js
+verbatim_1i_1o("600202", val)
+```
+
+Full example
+```js
+const yulp = require('../index');
+const source = yulp.compile(`
+
+object "DoubleVal" {
+  code {
+    datacopy(0, dataoffset("Runtime"), datasize("Runtime"))
+    return(0, datasize("Runtime"))
+  }
+  object "Runtime" {
+    code {
+      calldatacopy(0, 0, 36) // write calldata to memory
+
+      mstruct StoreCalldata( // Custom addressable calldata structure
+        sig: 4,
+        val: 32
+      )
+
+      switch StoreCalldata.sig(0) // select signature from memory (at position 0)
+
+      case sig"function double(uint256 val) returns (uint256)" {
+          let val := StoreCalldata.val(0)
+          let double_val := verbatim_1i_1o("600202", val)
+          mstore(100, double_val)
+          return (100, 32)
       }
     }
   }

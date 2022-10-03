@@ -1,7 +1,7 @@
 {
   "name": "yulp",
-  "version": "0.2.3",
-  "description": "A low-level highly-efficient language for the Ethereum Virtual Machine.",
+  "version": "0.2.3-verbatim",
+  "description": "A low-level highly-efficient language for the Ethereum Virtual Machine with support for arbitraty opcodes via verbatim.",
   "main": "src/index.js",
   "scripts": {
     "start": "npm run build && node ./examples/example.js",
@@ -23,7 +23,7 @@
     "ethjs-extras": "0.0.7",
     "hyperapp": "1.2.9",
     "regenerator-runtime": "0.13.2",
-    "solc": "0.5.7"
+    "solc": "^0.8.17"
   },
   "dependencies": {
     "bn.js": "^5.0.0",
